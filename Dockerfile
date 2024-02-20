@@ -63,7 +63,6 @@ COPY --from=wp /usr/src/wordpress /var/www/html
 COPY --from=wp /usr/local/etc/php/conf.d/* /usr/local/etc/php/conf.d/
 COPY --from=wp /usr/local/bin/docker-entrypoint.sh /usr/local/bin/
 COPY --from=wp --chown=root:root /usr/src/wordpress /var/www/html
-#COPY wp-content /usr/src/wordpress/wp-content
 
 
 COPY Caddyfile /etc/caddy/Caddyfile
@@ -73,8 +72,6 @@ RUN sed -i \
     -e 's/php-fpm/frankenphp/g' \
     /usr/local/bin/docker-entrypoint.sh
 
-
-COPY inc/Caddyfile /etc/caddy/Caddyfile
 
 
 RUN useradd -D ${USER} && \
