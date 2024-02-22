@@ -7,8 +7,8 @@ FROM wordpress:$WORDPRESS_VERSION as wp
 
 
 FROM dunglas/frankenphp:latest-php$PHP_VERSION as base
-ENV CADDY_GLOBAL_OPTIONS=$WP_DEBUG
-
+ENV CADDY_GLOBAL_OPTIONS=${DEBUG:+debug}
+ENV WP_DEBUG=${DEBUG:+1}
 
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -59,10 +59,9 @@ VOLUME /var/www/html
 COPY --from=composer/composer:latest-bin /composer /usr/bin/composer
 
 
-COPY --from=wp /usr/src/wordpress /var/www/html
+COPY --from=wp /usr/src/wordpress /usr/src/wordpress
 COPY --from=wp /usr/local/etc/php/conf.d/* /usr/local/etc/php/conf.d/
 COPY --from=wp /usr/local/bin/docker-entrypoint.sh /usr/local/bin/
-COPY --from=wp --chown=root:root /usr/src/wordpress /var/www/html
 
 
 COPY Caddyfile /etc/caddy/Caddyfile
@@ -79,9 +78,12 @@ RUN useradd -D ${USER} && \
     setcap CAP_NET_BIND_SERVICE=+eip /usr/local/bin/frankenphp
 # Caddy requires write access to /data/caddy and /config/caddy
 
+COPY _hc.php /var/www/html/_hc.php
+
 RUN chown -R ${USER}:${USER} /data/caddy && \
     chown -R ${USER}:${USER} /config/caddy && \
     chown -R ${USER}:${USER} /var/www/html && \
+    chown -R ${USER}:${USER} /usr/src/wordpress && \
     chown -R ${USER}:${USER} /usr/local/bin/docker-entrypoint.sh
 
 USER $USER

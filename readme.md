@@ -21,6 +21,24 @@ The goal for this WordPress Docker image repository is to include everything nee
 
 ### Environment Variables
 
+- DEBUG // Flag to set WP_DEBUG & debug mode on server. (1 or 0)
+- SERVER_NAME // Domain to set. Will request a SSL cert for it.
+- WP
+- DB_NAME
+- DB_USER
+- DB_PASSWORD
+- DB_HOST
+- DB_ROOT_PASSWORD
+- DB_TABLE_PREFIX
+- WP_DEBUG
+- WP_VERSION
+
+### Open Ports
+
+- 80 //Set http traffic from "server_name" env variable to point here.
+- 443 //Set https traffic from "server_name" env variable to point to here.
+- 8095 //Use this port when its behind a reverse proxy (load balancers, Kubernetes, other container orchestrations. Probably many use cases.)
+
 This image copies content from the base WordPress image. Relevant environment variables can be found in the parent repository.
 
 [Click here for the standard WordPress Docker Repo.](https://hub.docker.com/_/wordpress "WordPress Docker Images")
@@ -45,11 +63,10 @@ It is good practice to avoid using root users in your Docker images for security
 
 Convenience with low impact on final size. You may or may not use one of these services, but it is convenient to have them available when needed. It helps to not have to extend and create new Docker images for single services.
 
-## Additional References
+### What are the Changes from Base FrankenPHP?
 
-- **Repository Source:**
-  https://github.com/wpatscale/wordpress-docker
-- **Submit Issue / Change Request:**
-  https://github.com/wpatscale/wordpress-docker/issues
-- **Visit Our Home**
-  https://WPatScale.com
+This Docker image has a custom Caddyfile that has slight modifications from the FrankenPHP base image. The auto http to https redirects are turned off. In addition, it allows for all hosts on port 8095. This is needed for cloud services such as Kubernetes, ECS & Load Balancers where the request host is reversed proxied and unknown.
+
+### How to use in AWS & Other Cloud Providers?
+
+The server_name environment variable won't be useful in these scenarios as it is behind a reverse proxy like a load balancer. You will need to map PORT 80 traffic to PORT 8095. Listen on PORT 80 and then target PORT 8095 (ie 80:8095 in docker-compose.yml)
