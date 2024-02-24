@@ -10,7 +10,6 @@ The goal for this WordPress Docker image repository is to include everything nee
 
 - [WordPress](https://hub.docker.com/_/wordpress "WordPress Docker Image")
 - [FrankenPHP](https://hub.docker.com/r/dunglas/frankenphp "FrankenPHP Docker Image")
-- [PHP-FPM](https://hub.docker.com/_/wordpress "WordPress Docker Image")
 - [Composer](https://hub.docker.com/_/composer "Composer Docker Image")
 
 ### Caching Extensions Installed
@@ -51,7 +50,7 @@ The standard WordPress images are a good starting point and can handle many use 
 
 ### Why FrankenPHP?
 
-Do you want to use PHP-FPM with Wordpress & Apache? Not easy. Now you need 2 Docker images & deploying just got that much harder. FrankenPHP is built on Caddy, a modern web server. It is secure & performs well when scaling becomes important. It also allows us to integrate PHP-FPM into a single Docker image! Opens up whole new world.
+Do you want to use PHP-FPM with Wordpress & Apache? Not easy. Now you need 2 Docker images & deploying just got that much harder. FrankenPHP is built on Caddy, a modern web server. It is secure & performs well when scaling becomes important. It also allows us to take advantage of built-in mature concurrency into a single Docker image! Opens up whole new world.
 
 **[Check out FrankenPHP Here](https://frankenphp.dev/ "FrankenPHP")**
 
