@@ -1,4 +1,4 @@
-# Enterprise-Grade WordPress Images Ready to Go
+# WordPress + FrankenPHP Docker Image
 
 An enterprise-grade WordPress image built for scalability. It uses the new FrankenPHP App Server with PHP-FRM built-in. Popular caching extensions included (Redis, Memcached, opcache). It also runs on a non-root www-data user for modern security. Composer is also included if desired to add dependencies & run scripts via an extended image.
 

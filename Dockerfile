@@ -4,28 +4,7 @@ ARG USER=www-data
 
 FROM wordpress:$WORDPRESS_VERSION as wp
 
-
-FROM dunglas/frankenphp:latest-builder AS builder
-
-# Copy xcaddy in the builder image
-COPY --from=caddy:builder /usr/bin/xcaddy /usr/bin/xcaddy
-
-# CGO must be enabled to build FrankenPHP
-ENV CGO_ENABLED=1 XCADDY_SETCAP=1 XCADDY_GO_BUILD_FLAGS="-ldflags '-w -s'"
-RUN xcaddy build \
-    --output /usr/local/bin/frankenphp \
-    --with github.com/dunglas/frankenphp=./ \
-    --with github.com/dunglas/frankenphp/caddy=./caddy/ \
-    # Mercure and Vulcain are included in the official build, but feel free to remove them
-    --with github.com/dunglas/mercure/caddy \
-    --with github.com/dunglas/vulcain/caddy  \ 
-    # Add extra Caddy modules here
-    --with github.com/caddyserver/cache-handler
-
-FROM dunglas/frankenphp AS base
-
-# Replace the official binary by the one contained your custom modules
-COPY --from=builder /usr/local/bin/frankenphp /usr/local/bin/frankenphp
+FROM dunglas/frankenphp:latest-php${PHP_VERSION} AS base
 ENV CADDY_GLOBAL_OPTIONS=${DEBUG:+debug}
 ENV WP_DEBUG=${DEBUG:+1}
 ENV PHP_INI_SCAN_DIR=$PHP_INI_DIR/conf.d
@@ -48,7 +27,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libzip-dev \
     libmagickcore-dev \
     libmagickwand-6.q16-6 \
-    libmagickcore-6.q16-6
+    libmagickcore-6.q16-6 \
+    libmemcached-dev \
+    zlib1g-dev
 
 # https://pecl.php.net/package/imagick
 RUN set -ex; pecl install imagick-3.6.0; \
@@ -70,9 +51,7 @@ RUN	docker-php-ext-install -j "$(nproc)" \
     zip 
 
 
-# Or production:
 RUN cp $PHP_INI_DIR/php.ini-production $PHP_INI_DIR/php.ini
-# COPY composer.json composer.json
 COPY --from=composer/composer:latest-bin /composer /usr/bin/composer
 
 
@@ -91,10 +70,20 @@ RUN set -eux; \
     echo 'opcache.revalidate_freq=2'; \
     echo 'opcache.jit_buffer_size=100M'; \
     } > $PHP_INI_DIR/conf.d/opcache-recommended.ini
+
+
+## Installing REDIS
+RUN pecl install redis \
+    && rm -rf /tmp/pear \
+    && docker-php-ext-enable redis
+
+## Installing Memcached
+RUN pecl install memcached-3.2.0 \
+    && docker-php-ext-enable memcached
+
+
 # https://wordpress.org/support/article/editing-wp-config-php/#configure-error-logging
 RUN { \
-    # https://www.php.net/manual/en/errorfunc.constants.php
-    # https://github.com/docker-library/wordpress/issues/420#issuecomment-517839670
     echo 'error_reporting = E_ERROR | E_WARNING | E_PARSE | E_CORE_ERROR | E_CORE_WARNING | E_COMPILE_ERROR | E_COMPILE_WARNING | E_RECOVERABLE_ERROR'; \
     echo 'display_errors = Off'; \
     echo 'display_startup_errors = Off'; \
