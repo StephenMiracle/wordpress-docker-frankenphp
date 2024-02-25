@@ -1,6 +1,6 @@
 # WordPress + FrankenPHP Docker Image
 
-An enterprise-grade WordPress image built for scalability. It uses the new FrankenPHP App Server with PHP-FRM built-in. Popular caching extensions included (Redis, Memcached, opcache). It also runs on a non-root www-data user for modern security. Composer is also included if desired to add dependencies & run scripts via an extended image.
+An enterprise-grade WordPress image built for scalability. It uses the new FrankenPHP App Server without needing PHP-FPM. Popular caching extensions included (Redis, Memcached, opcache). It also runs on a non-root www-data user for modern security. Composer is also included if desired to add dependencies & run scripts via an extended image.
 
 The goal for this WordPress Docker image repository is to include everything needed for the majority of the use cases. You can deploy your WordPress projects directly from this image or use it as a starter for a custom image.
 
