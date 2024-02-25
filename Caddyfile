@@ -14,7 +14,6 @@
 	order vulcain after reverse_proxy
 	order php_server before file_server
 	order php before file_server
-	order cache before php_server
 }
 
 {$CADDY_EXTRA_CONFIG}
@@ -75,6 +74,5 @@
 	#vulcain
 
 	{$CADDY_SERVER_EXTRA_DIRECTIVES}
-	cache
 	php_server
 }
