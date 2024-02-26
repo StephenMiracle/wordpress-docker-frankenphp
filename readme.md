@@ -22,7 +22,6 @@ The goal for this WordPress Docker image repository is to include everything nee
 
 - DEBUG // Flag to set WP_DEBUG & debug mode on server. (1 or 0)
 - SERVER_NAME // Domain to set. Will request a SSL cert for it.
-- WP
 - DB_NAME
 - DB_USER
 - DB_PASSWORD

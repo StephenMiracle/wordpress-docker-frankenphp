@@ -1,0 +1,53 @@
+version: '3.1'
+
+services:
+
+  wordpress:
+    build: .
+      #target: ${DOCKER_TARGET:-prod}
+    restart: always
+    # env_file:
+    #   - .env
+    ports:
+      - "8095:8095" # HTTP
+      - "443:443" # HTTPS
+      - "443:443/udp" # HTTP/3
+    environment:
+      SERVER_NAME: ${SERVER_NAME:-localhost:8095}
+      WORDPRESS_DB_HOST: ${DB_HOST:-db}
+      WORDPRESS_DB_USER: ${DB_USER:-exampleuser}
+      WORDPRESS_DB_PASSWORD: ${DB_PASSWORD:-examplepass}
+      WORDPRESS_DB_NAME: ${DB_NAME:-exampledb}
+      WORDPRESS_DEBUG: ${WP_DEBUG:-true}
+      WORDPRESS_TABLE_PREFIX: ${DB_TABLE_PREFIX:-wp_}
+    depends_on:
+      - db
+    tty: true
+      
+  wpcli:
+    image: wordpress:cli
+    environment:
+      WORDPRESS_DB_HOST: ${DB_HOST:-db}
+      WORDPRESS_DB_NAME: ${DB_NAME:-exampledb}
+      WORDPRESS_DB_USER: ${DB_USER:-exampleuser}
+      WORDPRESS_DB_PASSWORD: ${DB_PASSWORD:-examplepass}
+    depends_on:
+      - db
+      - wp
+
+  db:
+    image: mysql
+    restart: always
+    ports:
+      - ${LOCAL_DB_PORT:-3306}:3306
+    environment:
+      MYSQL_DATABASE: ${DB_NAME:-exampledb}
+      MYSQL_USER: ${DB_USER:-exampleuser}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-examplepass}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-examplepass}
+    volumes:
+      - dbvol:/var/lib/mysql
+
+      
+volumes:
+  dbvol:
