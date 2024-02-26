@@ -10,9 +10,15 @@ FROM dunglas/frankenphp:latest-builder AS builder
 # Copy xcaddy in the builder image
 COPY --from=caddy:builder /usr/bin/xcaddy /usr/bin/xcaddy
 
+
 # CGO must be enabled to build FrankenPHP
+
+## BUILDING ON X86 Environments. Currently, outputs errors on run.
 #ENV CGO_ENABLED=1 CGO_LDFLAGS=-no-pie XCADDY_SETCAP=1 CGO_CXXFLAGS=-fPIE CGO_CFLAGS=-fPIE CGO_LDFLAGS=-pie XCADDY_GO_BUILD_FLAGS='-buildmode=pie -ldflags="-w -s" -trimpath'
+
+## BUILDING ON ARM Environments. Currently, runs without errors, but doesn't return any output in browser.
 ENV CGO_ENABLED=1 XCADDY_SETCAP=1 XCADDY_GO_BUILD_FLAGS='-ldflags="-w -s" -trimpath'
+
 
 RUN xcaddy build \
     --output /usr/local/bin/frankenphp \
@@ -20,7 +26,8 @@ RUN xcaddy build \
     --with github.com/dunglas/frankenphp/caddy=./caddy/ \
     # Mercure and Vulcain are included in the official build, but feel free to remove them
     --with github.com/dunglas/mercure/caddy \
-    --with github.com/dunglas/vulcain/caddy  \ 
+    --with github.com/dunglas/vulcain/caddy  \
+    --with github.com/dunglas/caddy-cbrotli \
     # Add extra Caddy modules here
     --with github.com/caddyserver/cache-handler
 
