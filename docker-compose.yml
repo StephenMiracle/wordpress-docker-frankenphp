@@ -11,7 +11,7 @@ services:
       # - "443:443" # HTTPS
       # - "443:443/udp" # HTTP/3
     environment:
-      SERVER_NAME: ${SERVER_NAME:-:8095}
+      SERVER_NAME: ${SERVER_NAME:-:80}
       WORDPRESS_DB_HOST: ${DB_HOST:-db}
       WORDPRESS_DB_USER: ${DB_USER:-exampleuser}
       WORDPRESS_DB_PASSWORD: ${DB_PASSWORD:-examplepass}
@@ -24,9 +24,9 @@ services:
         email myemail@sample.com
         auto_https disable_redirects
         debug
-      WORDPRESS_CONFIG_EXTRA: |
-          define('WP_SITEURL', '');
-          define('WP_HOME', '');
+      # WORDPRESS_CONFIG_EXTRA: |
+      #     define('WP_SITEURL', '');
+      #     define('WP_HOME', '');
           
     volumes:
       - ./wp-content:/var/www/html/wp-content
@@ -36,7 +36,7 @@ services:
     tty: true
 
   db:
-    image: mysql
+    image: mariadb:latest
     restart: always
     ports:
       - ${LOCAL_DB_PORT:-3309}:3306
@@ -46,7 +46,7 @@ services:
       MYSQL_PASSWORD: ${DB_PASSWORD:-examplepass}
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-examplepass}
     volumes:
-      - dbvol:/var/lib/mysql
+      - wpdbv:/var/lib/mysql
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
@@ -60,4 +60,4 @@ services:
       - db
 
 volumes:
-  dbvol:
+  wpdbv:
