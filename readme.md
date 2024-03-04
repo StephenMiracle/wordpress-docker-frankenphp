@@ -1,10 +1,10 @@
-# WPEverywhere . Build & Deploy WordPress Apps Anywhere
+# Docker Compose File for FrankenWP Image
 
-This project has been moved to a new location. You can find the most recent updates here: 
-https://github.com/StephenMiracle/wpeverywhere
+Basic Docker-Compose project for the FrankenWP image. It includes Wordpress, mysql & phpMyAdmin.
 
+# Get started
 
-## Table of Contents
-
-- [Dockerfiles](/docker/readme.md)
-  - [FrankenPHP](/docker/frankenphp.md)
+1. Rename .env.sample to .env
+2. Update any needed variables.
+3. Review docker-compose file for any needed modifications.
+4. run `docker compose up` to start environment
